@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/applicationautoscaling"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ecs"
 	"github.com/aws/aws-sdk-go/service/iam"
@@ -17,9 +18,7 @@ import (
 
 func clustersAddSpotFleetRun(cmd *cobra.Command, clusters []string) {
 	clustersDescription, err := ecsI.DescribeClusters(&ecs.DescribeClustersInput{
-		Clusters: []*string{
-			aws.String(clusters[0]),
-		},
+		Clusters: []*string{aws.String(clusters[0])},
 	})
 	typist.Must(err)
 
@@ -147,8 +146,20 @@ func clustersAddSpotFleetRun(cmd *cobra.Command, clusters []string) {
 		SpotFleetRequestConfig.AllocationStrategy = aws.String(allocationStrategy)
 	}
 
-	_, err = ec2I.RequestSpotFleet(&ec2.RequestSpotFleetInput{
+	spotFleetRequestResult, err := ec2I.RequestSpotFleet(&ec2.RequestSpotFleetInput{
 		SpotFleetRequestConfig: &SpotFleetRequestConfig,
+	})
+	typist.Must(err)
+
+	resourceID := "spot-fleet-request/" + aws.StringValue(spotFleetRequestResult.SpotFleetRequestId)
+
+	_, err = aasI.RegisterScalableTarget(&applicationautoscaling.RegisterScalableTargetInput{
+		MaxCapacity:       aws.Int64(10),
+		MinCapacity:       aws.Int64(1),
+		ResourceId:        aws.String(resourceID),
+		RoleARN:           aws.String("arn:aws:iam::012345678910:role/ApplicationAutoscalingECSRole"),
+		ScalableDimension: aws.String("ecs:service:DesiredCount"),
+		ServiceNamespace:  aws.String("ecs"),
 	})
 	typist.Must(err)
 }

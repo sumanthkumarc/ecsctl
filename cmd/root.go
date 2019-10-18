@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/applicationautoscaling"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ecr"
@@ -18,6 +19,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+var aasI *applicationautoscaling.ApplicationAutoScaling
 var ecsI *ecs.ECS
 var ecrI *ecr.ECR
 var ec2I *ec2.EC2
@@ -41,6 +43,7 @@ func persistentPreRun(cmd *cobra.Command, args []string) {
 
 	awsSession = session.New(&awsConfig)
 
+	aasI = applicationautoscaling.New(awsSession)
 	ecsI = ecs.New(awsSession)
 	ecrI = ecr.New(awsSession)
 	ec2I = ec2.New(awsSession)
