@@ -20,6 +20,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.3.3 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
+	github.com/pkg/errors v0.9.1
 	github.com/spf13/afero v1.3.4 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v1.0.0
@@ -29,4 +30,5 @@ require (
 	golang.org/x/sys v0.0.0-20200820212457-1fb795427249 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28
 	gopkg.in/ini.v1 v1.60.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0
 )
